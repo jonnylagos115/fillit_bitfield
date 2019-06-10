@@ -14,15 +14,17 @@
 
 int		main(int ac, char **ag)
 {
-	Tetrom	start;
-	Tetrom	*head;
-	int		fd;
-	int		num_of_pieces;
+	t_tetrom	start;
+	t_tetrom	*head;
+	int			fd;
+	int			num_of_pieces;
+	char		**board;
 
 	if (ac == 2)
 	{
 		fd = open(ag[1], O_RDONLY);
 		num_of_pieces = 0;
+		start.next = NULL;
 		if (fd < 0)
 		{
 			ft_putstr("ERROR!\n");
@@ -33,7 +35,8 @@ int		main(int ac, char **ag)
 			ft_putstr("error\n");
 			return (0);
 		}
-		fillit(head, num_of_pieces);
+		board = fillit(head, num_of_pieces);
+		print_grid(board);
 	}
 	return (0);
 }
