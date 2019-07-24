@@ -12,6 +12,10 @@
 
 #include "tetrominoes.h"
 
+/*
+**	Frees the linked list used to store the terominos.
+*/
+
 void		free_llist(t_tetrom *head)
 {
 	t_tetrom	*curr;
@@ -22,13 +26,17 @@ void		free_llist(t_tetrom *head)
 	while (curr)
 	{
 		i = -1;
-		while (curr->piece[++i])
+		while (curr->piece && curr->piece[++i])
 			ft_strdel(&curr->piece[i]);
 		temp = curr->next;
 		free(curr);
 		curr = temp;
 	}
 }
+
+/*
+**	Jonny doesn't even know how to spell tetrominos.
+*/
 
 void		print_grid(char **grid)
 {
@@ -39,29 +47,39 @@ void		print_grid(char **grid)
 		ft_putendl(grid[i]);
 }
 
+/*
+**	It's main. What do you expect.
+**	It checks to make sure that the file is valid and creates a linked list 
+**	containing all the tetrominos (using assemble_tetrominoes) in the file
+**	before calling fillit.
+**
+**	Returns 0 on success. Like a normal function should... Jonny.
+*/
+
 int			main(int ac, char **ag)
 {
 	t_tetrom	*head;
 	int			fd;
 	int			num_of_pieces;
-	char		**board;
 
 	if (ac == 2)
 	{
 		fd = open(ag[1], O_RDONLY);
 		num_of_pieces = 0;
 		head = (t_tetrom *)malloc(sizeof(*head));
+		head->next = NULL;
 		if (fd < 0 || !assemble_tetrominoes(head, &num_of_pieces, fd))
 		{
 			ft_putstr("error\n");
 			free_llist(head);
 			return (0);
 		}
-		board = fillit(head, num_of_pieces);
-		print_grid(board);
+		print_grid(fillit(head, num_of_pieces));
 		free_llist(head);
 	}
 	else
-		ft_putstr("usage: ./fillit source_file\n");
+		ft_putstr(ac > 2 ? 
+		"\ttoo many parameters\nusage:\t./fillit source_file\n" : 
+		"usage:\t./fillit source_file\n");
 	return (0);
 }
