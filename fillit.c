@@ -12,38 +12,32 @@
 
 #include "tetrominoes.h"
 
-int			shift_coordinates(t_tetrom *tetrom, int size) //I need to condense this mofo then I'm done with the norm bs god fuck, if only there was a poopoohead that help me out with this
+int			shift_coordinates(t_tetrom *tetrom, int size)
 {
 	int i;
-	int	shift_down;
+	int	j;
 
 	i = -1;
-	shift_down = 0;
-	while (++i < 4)
+	j = -1;
+	while (++i < 4 && j == -1)
 	{
 		if (tetrom->col[i] == size - 1)
-		{
-			i = -1;
-			while (++i < 4)
-				if ((tetrom->row[i] + 1) >= size)
-					return (0);
-			shift_down = 1;
-			break ;
-		}
+			while (++j < 4)
+				if (tetrom->row[j] + 1 >= size)
+					return (1);
 	}
-	i = -1;
-	if (shift_down)
-	{
-		while (++i < 4)
-		{
-			tetrom->row[i] += 1;
-			tetrom->col[i] = tetrom->reset_col[i];
-		}
-	}
-	else
-		while (++i < 4)
+	if (i == 4)
+		while (--i > -1)
 			tetrom->col[i] += 1;
-	return (1);
+	else
+	{
+		while (--j > -1)
+		{
+			tetrom->row[j] += 1;
+			tetrom->col[j] = tetrom->reset_col[j];
+		}
+	}
+	return (0);
 }
 
 int			store_place_piece(t_tetrom *tetrom, uint64_t *grid, int dim)
@@ -53,10 +47,9 @@ int			store_place_piece(t_tetrom *tetrom, uint64_t *grid, int dim)
 	int				i;
 
 	i = -1;
-	k_bit = 0;
 	while (check_available_spot(tetrom, grid, dim))
-		if (!shift_coordinates(tetrom, dim))
-			return (0);
+		if (shift_coordinates(tetrom, dim))
+			return (1);
 	while (++i < 4)
 	{
 		k_bit = (tetrom->row[i] * dim) + tetrom->col[i];
@@ -64,7 +57,7 @@ int			store_place_piece(t_tetrom *tetrom, uint64_t *grid, int dim)
 		value = value << k_bit;
 		*grid |= value;
 	}
-	return (1);
+	return (0);
 }
 
 void		clear_piece(t_tetrom *curr, uint64_t *grid, int dim)
@@ -98,21 +91,18 @@ int dim)
 	while (curr_prev)
 	{
 		clear_piece(curr_prev, grid, dim);
-		if (!shift_coordinates(curr_prev, dim) ||
-			!store_place_piece(curr_prev, grid, dim))
-		{
-			get_rc_piece(*tetrom);
-			shift_c_to_pos(curr_prev, grid, dim);
-			curr_prev = locate_piece(head, curr_prev->alphabet - 1);
-		}
-		else
+		if (!shift_coordinates(curr_prev, dim)
+		&& !store_place_piece(curr_prev, grid, dim))
 		{
 			(*tetrom) = locate_piece(head, curr_prev->alphabet + 1);
-			return (1);
+			return (0);
 		}
+		get_rc_piece(*tetrom);
+		shift_c_to_pos(*tetrom, grid, dim);
+		curr_prev = locate_piece(head, curr_prev->alphabet - 1);
 	}
 	(*tetrom) = locate_piece(head, 'A');
-	return (0);
+	return (1);
 }
 
 char		**fillit(t_tetrom *tetrom, int num_of_tetrom)
@@ -128,9 +118,9 @@ char		**fillit(t_tetrom *tetrom, int num_of_tetrom)
 	grid = 0;
 	while (tetrom)
 	{
-		if (!store_place_piece(tetrom, &grid, dim))
+		if (store_place_piece(tetrom, &grid, dim))
 		{
-			if (!undo_prev_piece(head, &tetrom, &grid, dim))
+			if (undo_prev_piece(head, &tetrom, &grid, dim))
 				clear_reset_pieces(head, &grid, &dim);
 		}
 		else

@@ -12,32 +12,40 @@
 
 #include "tetrominoes.h"
 
-int			starting_board_size(double num)
-{
-	double	lo;
-	double	hi;
-	double	mid;
-	int		i;
+/*
+**	Finds the minimum size of the grid for the number of pieces.
+**	(Hint: it's just the square root, with extra addition sometimes.)
+**
+**	Returns the starting board size.
+*/
 
-	lo = 0;
-	hi = num;
-	i = -1;
-	while (++i < 1000)
+int			starting_board_size(int num)
+{
+	int		factors[10];
+	int		num_of_factors;
+	int		i;
+	int		num_cpy;
+
+	i = num;
+	num_of_factors = -1;
+	num_cpy = num;
+	while (num_cpy != 1)
 	{
-		mid = (lo + hi) / 2;
-		if (mid * mid == num)
-			return ((int)mid);
-		if (mid * mid > num)
-			hi = mid;
+		while ((i * i) > num_cpy)
+			i--;
+		if ((i * i) % num_cpy == 0)
+		{
+			factors[++num_of_factors] = i;
+			num_cpy /= (i * i);
+			i = num_cpy;
+		}
 		else
-			lo = mid;
+			num_cpy--;
 	}
-	i = (int)mid;
-	if (mid > i + 0.5)
-		mid += 1;
-	if (mid - 1 > 3.0)
-		mid -= 1;
-	return ((int)mid);
+	i = factors[num_of_factors];
+	while (--num_of_factors >= 0)
+		i *= factors[num_of_factors];
+	return (i + 2 > (num / 4) - 2 ? i : (num / 4) % 2 == 0 ? i + 2 : i + 1);
 }
 
 t_tetrom	*locate_piece(t_tetrom *head, char letter)
@@ -56,69 +64,86 @@ t_tetrom	*locate_piece(t_tetrom *head, char letter)
 	return (tetrom);
 }
 
+/*
+**	Assigns row, col, reset_row, and reset_col (in struct tetrom)
+**	to the coordinates of the 4 minos in the tetrominos.
+*/
+
 void		get_reset_coordinates(t_tetrom *tetrom)
 {
-	t_point p;
+	int		i;
+	int		j;
+	int		curr_mino;
 
-	p.i = -1;
-	p.j = -1;
-	p.curr = 0;
-	while (tetrom->piece[++p.i] && p.curr != 4)
+	i = -1;
+	j = -1;
+	curr_mino = 0;
+	while (tetrom->piece[++i] && curr_mino != 4)
 	{
-		while (tetrom->piece[p.i][++p.j])
+		while (tetrom->piece[i][++j])
 		{
-			if (tetrom->piece[p.i][p.j] == '#')
+			if (tetrom->piece[i][j] == '#')
 			{
-				tetrom->reset_row[p.curr] = p.i;
-				tetrom->reset_col[p.curr] = p.j;
-				tetrom->row[p.curr] = p.i;
-				tetrom->col[p.curr] = p.j;
-				p.curr++;
+				tetrom->reset_row[curr_mino] = i;
+				tetrom->reset_col[curr_mino] = j;
+				tetrom->row[curr_mino] = i;
+				tetrom->col[curr_mino] = j;
+				curr_mino++;
 			}
 		}
-		p.j = -1;
+		j = -1;
 	}
 }
 
 char		**convert_bitfield(t_tetrom *start, int dim)
 {
-	t_tetrom	*curr;
+	t_tetrom	*curr_mino;
 	char		**grid;
 	int			i;
 
-	curr = start;
+	curr_mino = start;
 	grid = create_empty_grid(dim);
 	i = -1;
-	while (curr)
+	while (curr_mino)
 	{
 		while (++i < 4)
-			grid[curr->row[i]][curr->col[i]] = curr->alphabet;
+			grid[curr_mino->row[i]][curr_mino->col[i]] = curr_mino->alphabet;
 		i = -1;
-		curr = curr->next;
+		curr_mino = curr_mino->next;
 	}
 	return (grid);
 }
 
-void		insert_spaces(int *s, int *i, int *flag, char *str)
+/*
+**	Checks every '.' to see if it needs to be replaced with a ' '.
+**	If it does, make the replacement.
+*/
+
+void		insert_spaces(char *str)
 {
-	while ((((*s) += 5) <= 15))
+	int		i;
+	int		spaces;
+	int		touches;
+
+	i = 0;
+	spaces = 0;
+	while (i > -1)
 	{
-		if (str[(*i) + (*s)] == '#' || str[(*i) + (*s)] == ' ')
+		if (str[i] == '.')
 		{
-			if ((*i) != 0 && str[((*i) - 1) + (*s)] == '.')
-				(*flag) += check_if_insert_space(str, (*i) - 1 + (*s));
-			if (str[((*i) + 1) + (*s)] == '.')
-				(*flag) += check_if_insert_space(str, (*i) + 1 + (*s));
-			if (((*i) + (*s)) > 4 && str[((*i) + (*s)) - 5] == '.')
-				(*flag) += check_if_insert_space(str, (*i) + (*s) - 5);
-			if (((*i) + (*s)) < 14 && str[((*i) + (*s)) + 5] == '.')
-				(*flag) += check_if_insert_space(str, (*i) + (*s) + 5);
+			touches = 0;
+			if ((i != 0 && (str[i - 1] == '#' || str[i - 1] == ' ')) ||
+			str[i + 1] == '#' || str[i + 1] == ' ')
+				touches++;
+			if ((i > 4 && (str[i - 5] == '#' || str[i - 5] == ' ')) ||
+			(i < 14 && (str[i + 5] == '#' || str[i + 5] == ' ')))
+				touches++;
+			if (touches >= 2)
+			{
+				str[i] = ' ';
+				spaces++;
+			}
 		}
-	}
-	(*s) = -5;
-	if (*flag)
-	{
-		(*i) = -1;
-		(*flag) = 0;
+		i = str[i] ? i + 1 : spaces == 1 ? 0 : -1;
 	}
 }

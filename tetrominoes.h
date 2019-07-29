@@ -28,15 +28,9 @@ typedef struct			s_tetrom
 	int					reset_row[4];
 	int					reset_col[4];
 	int					height;
+	int					width;
 	struct s_tetrom		*next;
 }						t_tetrom;
-
-typedef struct			s_point
-{
-	int i;
-	int j;
-	int curr;
-}						t_point;
 
 int						assemble_tetrominoes(t_tetrom *tetrom,
 int *t_count, int fd);
@@ -47,11 +41,10 @@ char					**convert_bitfield(t_tetrom *start, int dim);
 void					get_reset_coordinates(t_tetrom *tetrom);
 void					clear_reset_pieces(t_tetrom *head, uint64_t *grid,
 int *dim);
-void					insert_spaces(int *s, int *i, int *flag, char *str);
+void					insert_spaces(char *str);
 void					bit_field_write(unsigned int bit, uint64_t *byte);
 void					get_rc_piece(t_tetrom *curr);
 void					print_grid(char **grid);
-int						check_if_insert_space(char *str, int index);
 int						shift_coordinates(t_tetrom *tetrom, int size);
 int						check_available_spot(t_tetrom *tetrom,
 uint64_t *grid, int dim);
@@ -59,6 +52,6 @@ int						shift_c_to_pos(t_tetrom *tetrom,
 uint64_t *grid, int dim);
 int						store_place_piece(t_tetrom *tetrom, uint64_t *grid,
 int dim);
-int						starting_board_size(double num);
+int						starting_board_size(int num);
 
 #endif

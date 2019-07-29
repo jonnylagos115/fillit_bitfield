@@ -60,9 +60,9 @@ char		**create_empty_grid(int len)
 int			shift_c_to_pos(t_tetrom *tetrom, uint64_t *grid, int dim)
 {
 	while (check_available_spot(tetrom, grid, dim))
-		if (!shift_coordinates(tetrom, dim))
-			return (0);
-	return (1);
+		if (shift_coordinates(tetrom, dim))
+			return (1);
+	return (0);
 }
 
 int			check_available_spot(t_tetrom *tetrom, uint64_t *grid, int dim)

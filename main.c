@@ -44,12 +44,13 @@ void		print_grid(char **grid)
 
 	i = -1;
 	while (grid[++i])
-		ft_putendl(grid[i]);
+		printf("%s\n", grid[i]);
+	printf("\n");
 }
 
 /*
 **	It's main. What do you expect.
-**	It checks to make sure that the file is valid and creates a linked list 
+**	It checks to make sure that the file is valid and creates a linked list
 **	containing all the tetrominos (using assemble_tetrominoes) in the file
 **	before calling fillit.
 **
@@ -78,8 +79,8 @@ int			main(int ac, char **ag)
 		free_llist(head);
 	}
 	else
-		ft_putstr(ac > 2 ? 
-		"\ttoo many parameters\nusage:\t./fillit source_file\n" : 
+		ft_putstr(ac > 2 ?
+		"\ttoo many parameters\nusage:\t./fillit source_file\n" :
 		"usage:\t./fillit source_file\n");
 	return (0);
 }
