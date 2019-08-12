@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jlagos <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/25 10:22:31 by jlagos            #+#    #+#             */
-/*   Updated: 2019/06/25 10:22:46 by jlagos           ###   ########.fr       */
+/*   Created: 2019/08/11 15:32:05 by jlagos            #+#    #+#             */
+/*   Updated: 2019/08/11 15:32:15 by jlagos           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,11 @@ void		print_grid(char **grid)
 
 	i = -1;
 	while (grid[++i])
-		printf("%s\n", grid[i]);
-	printf("\n");
+	{
+		ft_putstr(grid[i]);
+		ft_putchar('\n');
+	}
+	ft_putchar('\n');
 }
 
 /*

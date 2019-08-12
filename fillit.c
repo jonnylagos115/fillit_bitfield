@@ -17,20 +17,18 @@ int			shift_coordinates(t_tetrom *tetrom, int size)
 	int i;
 	int	j;
 
-	i = -1;
+	i = 0;
 	j = -1;
-	while (++i < 4 && j == -1)
-	{
-		if (tetrom->col[i] == size - 1)
-			while (++j < 4)
-				if (tetrom->row[j] + 1 >= size)
-					return (1);
-	}
+	while (i < 4 && tetrom->col[i] != size - 1)
+		i++;
 	if (i == 4)
 		while (--i > -1)
 			tetrom->col[i] += 1;
 	else
 	{
+		while (++j < 4)
+			if (tetrom->row[j] + 1 >= size)
+				return (1);
 		while (--j > -1)
 		{
 			tetrom->row[j] += 1;
