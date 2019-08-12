@@ -12,6 +12,11 @@
 
 #include "tetrominoes.h"
 
+/*
+**	Resets the coordinates for every piece, cleans the board and increments
+**	the size of the board up by one.
+*/
+
 void		clear_reset_pieces(t_tetrom *head, uint64_t *grid, int *dim)
 {
 	t_tetrom	*curr;
@@ -26,6 +31,10 @@ void		clear_reset_pieces(t_tetrom *head, uint64_t *grid, int *dim)
 	(*grid) = 0;
 }
 
+/*
+**	Resets the coordinates of the given piece to their starting position.
+*/
+
 void		get_rc_piece(t_tetrom *curr)
 {
 	int		i;
@@ -39,10 +48,10 @@ void		get_rc_piece(t_tetrom *curr)
 }
 
 /*
-** position the value and the mask (line 51 & 52)
-** invert the mask (line 53)
-** filter the existing value, reset to zero (line 54)
-** set the bit field (line 55)
+**	Creates the 2d (square) string array with the dimentions of len,
+**	and fills it with '.'
+**
+**	Returns the completed array.
 */
 
 char		**create_empty_grid(int len)
@@ -57,13 +66,11 @@ char		**create_empty_grid(int len)
 	return (grid);
 }
 
-int			shift_c_to_pos(t_tetrom *tetrom, uint64_t *grid, int dim)
-{
-	while (check_available_spot(tetrom, grid, dim))
-		if (shift_coordinates(tetrom, dim))
-			return (1);
-	return (0);
-}
+/*
+**	Checks in the grid to see if the piece fits at the specific coordinates.
+**
+**	Returns 1 if it doesn't fit, 0 if it does.
+*/
 
 int			check_available_spot(t_tetrom *tetrom, uint64_t *grid, int dim)
 {

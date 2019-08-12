@@ -44,11 +44,7 @@ void		print_grid(char **grid)
 
 	i = -1;
 	while (grid[++i])
-	{
-		ft_putstr(grid[i]);
-		ft_putchar('\n');
-	}
-	ft_putchar('\n');
+		ft_putendl(grid[i]);
 }
 
 /*

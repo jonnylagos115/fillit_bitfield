@@ -48,8 +48,6 @@ void					print_grid(char **grid);
 int						shift_coordinates(t_tetrom *tetrom, int size);
 int						check_available_spot(t_tetrom *tetrom,
 uint64_t *grid, int dim);
-int						shift_c_to_pos(t_tetrom *tetrom,
-uint64_t *grid, int dim);
 int						store_place_piece(t_tetrom *tetrom, uint64_t *grid,
 int dim);
 int						starting_board_size(int num);

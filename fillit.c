@@ -12,6 +12,12 @@
 
 #include "tetrominoes.h"
 
+/*
+**	Shifts the coordiantes of the current peice.
+**
+**	Returns 1 if the end of grid has been reached. Returns 0 on success.
+*/
+
 int			shift_coordinates(t_tetrom *tetrom, int size)
 {
 	int i;
@@ -38,6 +44,12 @@ int			shift_coordinates(t_tetrom *tetrom, int size)
 	return (0);
 }
 
+/*
+**	Finds the first spot for the current piece, and places the piece.
+**
+**	Returns 0 on no spot found, 1 on spot found and successful placement.
+*/
+
 int			store_place_piece(t_tetrom *tetrom, uint64_t *grid, int dim)
 {
 	u_int64_t		value;
@@ -58,6 +70,10 @@ int			store_place_piece(t_tetrom *tetrom, uint64_t *grid, int dim)
 	return (0);
 }
 
+/*
+**	Removes the current piece from the grid.
+*/
+
 void		clear_piece(t_tetrom *curr, uint64_t *grid, int dim)
 {
 	unsigned int	k_bit;
@@ -74,11 +90,18 @@ void		clear_piece(t_tetrom *curr, uint64_t *grid, int dim)
 			flag = flag << k_bit;
 			flag = ~flag;
 			*grid = (*grid) & flag;
-			flag = ~flag;
-			flag = flag >> k_bit;
+			flag = 1;
 		}
 	}
 }
+
+/*
+**	Increments the previous piece to the next available spot. If none is found,
+**	go back one more piece until it hits 'A' piece.
+**
+**	Returns 0 on successful placement of the piece. Returns 1 on no placements,
+**	and increasing the board size is required.
+*/
 
 int			undo_prev_piece(t_tetrom *head, t_tetrom **tetrom, uint64_t *grid,
 int dim)
@@ -95,13 +118,19 @@ int dim)
 			(*tetrom) = locate_piece(head, curr_prev->alphabet + 1);
 			return (0);
 		}
-		get_rc_piece(*tetrom);
-		shift_c_to_pos(*tetrom, grid, dim);
 		curr_prev = locate_piece(head, curr_prev->alphabet - 1);
 	}
 	(*tetrom) = locate_piece(head, 'A');
 	return (1);
 }
+
+/*
+**	Increments the previous piece to the next available spot. If none is found,
+**	go back one more piece until it hits 'A' piece.
+**
+**	Returns 0 on successful placement of the piece. Returns 1 on no placements,
+**	and increasing the board size is required.
+*/
 
 char		**fillit(t_tetrom *tetrom, int num_of_tetrom)
 {

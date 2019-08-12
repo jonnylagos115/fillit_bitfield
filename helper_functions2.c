@@ -37,7 +37,6 @@ int			starting_board_size(int num)
 		{
 			factors[++num_of_factors] = i;
 			num_cpy /= (i * i);
-			i = num_cpy;
 		}
 		else
 			num_cpy--;
@@ -45,8 +44,15 @@ int			starting_board_size(int num)
 	i = factors[num_of_factors];
 	while (--num_of_factors >= 0)
 		i *= factors[num_of_factors];
-	return (i + 2 > (num / 4) - 2 ? i : (num / 4) % 2 == 0 ? i + 2 : i + 1);
+	i = i + 2 > (num / 4) - 2 ? i : i + 1;
+	return ((num / 4) % 2 == 0 && (num / 4) > i ? i + 1 : i);
 }
+
+/*
+**	Finds the list associated with letter in the linked list head.
+**
+**	Returns the list if found, NULL if not found or invalid letter.
+*/
 
 t_tetrom	*locate_piece(t_tetrom *head, char letter)
 {
@@ -95,6 +101,14 @@ void		get_reset_coordinates(t_tetrom *tetrom)
 	}
 }
 
+/*
+**	Creates the grid to be printed to the standard output.
+**	The function assumes all the pieces are all properly placed
+**	and places the pieces based off of their coordinates into the grid.
+**
+**	Returns the grid.
+*/
+
 char		**convert_bitfield(t_tetrom *start, int dim)
 {
 	t_tetrom	*curr_mino;
@@ -127,7 +141,7 @@ void		insert_spaces(char *str)
 
 	i = 0;
 	spaces = 0;
-	while (i > -1)
+	while (!(i == -1 && spaces != 1) && ++i > -1 && spaces != 2)
 	{
 		if (str[i] == '.')
 		{
@@ -144,6 +158,6 @@ void		insert_spaces(char *str)
 				spaces++;
 			}
 		}
-		i = str[i] ? i + 1 : spaces == 1 ? 0 : -1;
+		i = str[i] ? i : -1;
 	}
 }
