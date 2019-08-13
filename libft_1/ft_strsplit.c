@@ -5,13 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jlagos <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/19 15:51:24 by jlagos            #+#    #+#             */
-/*   Updated: 2019/02/19 15:52:45 by jlagos           ###   ########.fr       */
+/*   Created: 2018/11/07 17:20:43 by jlagos            #+#    #+#             */
+/*   Updated: 2018/12/10 19:23:04 by jlagos           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
+#include <stdio.h>
 static size_t	num_of_strings(char const *s, char c, size_t *x)
 {
 	size_t i;
@@ -95,15 +95,15 @@ char			**ft_strsplit(char const *s, char c)
 	len = num_of_strings(s, c, &read_s);
 	if (!(strsplit = (char **)malloc((len + 1) * sizeof(char *))))
 		return (NULL);
-	while (i < len + 1)
+	while (i < len)
 	{
 		if (!(strsplit[i] = ft_strnew(len_str(&temp, c))))
 			return (free_malloc(&strsplit, i));
 		i++;
 	}
+	strsplit[i] = NULL;
 	i = 0;
 	while (i < len)
 		assign_char(&strsplit[i++], s, &read_s, c);
-	strsplit[i] = NULL;
 	return (strsplit);
 }
